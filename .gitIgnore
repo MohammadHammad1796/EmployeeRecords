@@ -14,6 +14,7 @@
 appsettings.json
 .vscode/
 **/wwwroot/employees/
+**/wwwroot/libs
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs

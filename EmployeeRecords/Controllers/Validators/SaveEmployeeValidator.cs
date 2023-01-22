@@ -11,10 +11,13 @@ public class SaveEmployeeResourceValidator : AbstractValidator<SaveEmployeeResou
             .NotEmpty()
             .WithMessage("DepartmentId is required");
 
+        var thisYear = DateTime.UtcNow.Year;
         RuleFor(e => e.DateOfBirth)
             .NotEmpty()
             .WithMessage("Date of birth is required")
-            .Must(d => DateTime.UtcNow.Year - d.Year >= 18)
-            .WithMessage("Date of birth should be at least since 18 years");
+            .Must(d => thisYear - d.Year >= 18)
+            .WithMessage("Date of birth should be at least since 18 years")
+            .Must(d => thisYear - d.Year <= 60)
+            .WithMessage("Date of birth should be at maximum since 60 years");
     }
 }

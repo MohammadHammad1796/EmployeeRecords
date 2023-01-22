@@ -10,6 +10,7 @@ public class DataTableQueryResource
     [Required]
     public PageResource Page { get; set; }
 
+    [MaxLength(50)]
     public string? SearchQuery { get; set; }
 
     public bool WithTotal { get; set; }

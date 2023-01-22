@@ -1,9 +1,7 @@
-using System.ComponentModel.DataAnnotations;
+using EmployeeRecords.Controllers.SharedModels;
 
 namespace EmployeeRecords.Controllers.Apis.Resources;
 
-public class UpdateEmployeeFileResource
+public class UpdateEmployeeFileResource : UpdateEmployeeFileSharedModel
 {
-    [Required]
-    public IFormFile File { get; set; }
 }

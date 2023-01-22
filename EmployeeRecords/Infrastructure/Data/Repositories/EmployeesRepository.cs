@@ -16,7 +16,7 @@ public class EmployeesRepository : Repository<Employee>, IEmployeesRepository
     public async Task<Employee?> GetByIdAsync(int id)
     {
         const string sqlStatement = "SELECT e.*, d.Name AS DepartmentName FROM Employees e " +
-                                    "LEFT JOIN Departments d ON e.DepartmentId = d.Id " +
+                                    "INNER JOIN Departments d ON e.DepartmentId = d.Id " +
                                     "WHERE e.Id = @id";
         var idParameter = new SqlParameter("@id", SqlDbType.Int) { Value = id };
         var employees = await ExecuteReaderAsync(
@@ -25,7 +25,7 @@ public class EmployeesRepository : Repository<Employee>, IEmployeesRepository
         return employees.SingleOrDefault();
     }
 
-    public async Task<bool> IsRecordExisted(int id)
+    public async Task<bool> IsRecordExistedAsync(int id)
     {
         const string sqlStatement = "SELECT COUNT(*) FROM Employees WHERE Id = @id";
         var idParameter = new SqlParameter("@id", SqlDbType.Int)
@@ -39,11 +39,11 @@ public class EmployeesRepository : Repository<Employee>, IEmployeesRepository
     public async Task<IEnumerable<Employee>> GetAsync(Query? query = null)
     {
         var sqlStatement = "SELECT e.*, d.Name AS DepartmentName FROM Employees e " +
-                           "LEFT JOIN Departments d ON e.DepartmentId = d.Id";
+                           "INNER JOIN Departments d ON e.DepartmentId = d.Id";
         if (query != null)
         {
             if (!string.IsNullOrWhiteSpace(query.SearchQuery))
-                sqlStatement += " WHERE e.Name LIKE @searchQuery";
+                sqlStatement += " WHERE e.Name LIKE @searchQuery OR d.Name LIKE @searchQuery";
             if (query.Ordering != null)
             {
                 if (query.Ordering.By.ToLower() == "department")
@@ -76,12 +76,13 @@ public class EmployeesRepository : Repository<Employee>, IEmployeesRepository
 
     public async Task<int> GetCountAsync(string? searchQuery = null)
     {
-        var sqlStatement = "SELECT COUNT(*) FROM Employees";
+        var sqlStatement = "SELECT COUNT(e.Id) FROM Employees e INNER JOIN Departments d" +
+                           " ON e.DepartmentId = d.Id";
         var parameters = new List<SqlParameter>();
 
         if (!string.IsNullOrWhiteSpace(searchQuery))
         {
-            sqlStatement += " WHERE Name LIKE @searchQuery";
+            sqlStatement += " WHERE e.Name LIKE @searchQuery OR d.Name LIKE @searchQuery";
             var searchParameter = new SqlParameter("@searchQuery", SqlDbType.VarChar)
             {
                 Value = $"%{searchQuery}%"
@@ -176,12 +177,10 @@ public class EmployeesRepository : Repository<Employee>, IEmployeesRepository
                 Address = reader.GetString(reader.GetOrdinal("Address")),
                 Department = new Department
                 {
-                    Id = reader.GetInt32(reader.GetOrdinal("DepartmentId"))
+                    Id = reader.GetInt32(reader.GetOrdinal("DepartmentId")),
+                    Name = reader.GetString(reader.GetOrdinal("DepartmentName"))
                 }
             };
-
-            if (!reader.IsDBNull(reader.GetOrdinal("DepartmentName")))
-                employee.Department.Name = reader.GetString(reader.GetOrdinal("DepartmentName"));
 
             employees.Add(employee);
         }

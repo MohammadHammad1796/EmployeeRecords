@@ -47,14 +47,25 @@
     },
     {
       "collectionId": "0e66a3dc-574e-712b-cb03-72e2cfdace57",
-      "id": "56e78d11-df28-0cdf-b9f9-d422f6b9befd",
-      "name": "Employees Files update file name",
+      "id": "3625df6e-6341-c1ab-9439-b0a9f9be23bc",
+      "name": "Employees Files update",
       "description": "",
-      "url": "http://localhost:5098/api/employees/3/files/updatefilename/c3f7bdfe-e311-4b55-96bf-283745672a40",
+      "url": "http://localhost:5098/api/employees/9/files/d8e6f787-16c9-4704-b05a-0d09494e1544",
       "method": "PUT",
-      "headers": "Content-Type: application/json\n",
-      "data": "{\n  \"name\": \"levels\"\n}",
-      "dataMode": "raw",
+      "headers": "",
+      "data": [
+        {
+          "key": "file",
+          "value": "",
+          "type": "file"
+        },
+        {
+          "key": "name",
+          "value": "Personal photo",
+          "type": "text"
+        }
+      ],
+      "dataMode": "params",
       "timestamp": 0,
       "responses": [],
       "version": 2
@@ -117,37 +128,17 @@
     },
     {
       "collectionId": "0e66a3dc-574e-712b-cb03-72e2cfdace57",
-      "id": "b59fcd05-2930-d4b0-9193-4d65ed968dd1",
-      "name": "Employees Files update file",
-      "description": "",
-      "url": "http://localhost:5098/api/employees/3/files/updatefile/c3f7bdfe-e311-4b55-96bf-283745672a40",
-      "method": "PUT",
-      "headers": "",
-      "data": [
-        {
-          "key": "file",
-          "value": "",
-          "type": "file"
-        }
-      ],
-      "dataMode": "params",
-      "timestamp": 0,
-      "version": 2,
-      "time": 1674077943306
-    },
-    {
-      "collectionId": "0e66a3dc-574e-712b-cb03-72e2cfdace57",
       "id": "b7c60ca5-7c13-42cc-49a1-2e88353b9a20",
       "name": "Departments get list",
       "description": "",
-      "url": "http://localhost:5098/api/departments?page.Size=10&page.Number=1&Sort.isAscending=false&sort.By=name&searchQuery=&withtotal=true",
+      "url": "http://localhost:5098/api/departments?page.Size=10&page.Number=1&sort.isAscending=false&sort.By=name&searchQuery=&withtotal=true",
       "method": "GET",
       "headers": "",
-      "data": [],
-      "dataMode": "params",
+      "data": "",
+      "dataMode": "raw",
       "timestamp": 0,
       "version": 2,
-      "time": 1674166327082
+      "time": 1674340136489
     },
     {
       "collectionId": "0e66a3dc-574e-712b-cb03-72e2cfdace57",
@@ -179,14 +170,14 @@
       "id": "bfc9cc48-03fb-270a-4a41-44851effaf2d",
       "name": "Employees Files get list",
       "description": "",
-      "url": "http://localhost:5098/api/employees/8/files?page.Size=10&page.Number=1&Sort.isAscending=false&sort.By=size&searchQuery=&withtotal=true",
+      "url": "http://localhost:5098/api/employees/8/files?page.Size=10&page.Number=1&sort.isAscending=false&sort.By=size&searchQuery=&withtotal=true",
       "method": "GET",
       "headers": "",
-      "data": [],
-      "dataMode": "params",
+      "data": "",
+      "dataMode": "raw",
       "timestamp": 0,
       "version": 2,
-      "time": 1674166406559
+      "time": 1674340165372
     },
     {
       "collectionId": "0e66a3dc-574e-712b-cb03-72e2cfdace57",
@@ -207,14 +198,14 @@
       "id": "e1fff6ec-badb-532a-4685-47d884375345",
       "name": "Employees get list",
       "description": "",
-      "url": "http://localhost:5098/api/employees?pageSize=2&pageNumber=1&isSortAscending=false&sortBy=department&searchQuery=&withtotal=true",
+      "url": "http://localhost:5098/api/employees?page.size=2&page.number=1&sort.isAscending=false&sort.by=department&searchQuery=&withtotal=true",
       "method": "GET",
       "headers": "",
-      "data": [],
-      "dataMode": "params",
+      "data": "{\n  \"name\": \"Salim Salloum\",\n  \"address\": \"Some place\",\n  \"departmentId\": 4,\n  \"dateOfBirth\": \"2005-12-15\"\n}",
+      "dataMode": "raw",
       "timestamp": 0,
       "version": 2,
-      "time": 1674162491440
+      "time": 1674340210356
     },
     {
       "collectionId": "0e66a3dc-574e-712b-cb03-72e2cfdace57",

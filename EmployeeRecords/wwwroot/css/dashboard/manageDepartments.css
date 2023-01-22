@@ -1,0 +1,35 @@
+﻿#items td {
+    vertical-align: baseline;
+}
+
+#items td:last-child a {
+    text-decoration: none;
+}
+
+.toast-container {
+    top: 55px !important;
+}
+
+section {
+    margin-bottom: 15px;
+    padding: 1%;
+}
+
+.field-validation-error {
+    color: #F00;
+}
+
+.form-select:hover {
+    cursor: pointer;
+}
+
+@media (min-width: 761px) {
+    #items {
+        max-width: none;
+        width: auto;
+    }
+
+    #items td, #items th {
+        width: 130px;
+    }
+}

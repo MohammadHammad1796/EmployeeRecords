@@ -71,7 +71,7 @@ public class DepartmentsRepository : Repository<Department>, IDepartmentsReposit
         return departments;
     }
 
-    public async Task<bool> IsRecordExisted(int id)
+    public async Task<bool> IsRecordExistedAsync(int id)
     {
         const string sqlStatement = "SELECT COUNT(*) FROM Departments WHERE Id = @id";
         var idParameter = new SqlParameter("@id", SqlDbType.Int)

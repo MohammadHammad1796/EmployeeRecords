@@ -10,11 +10,14 @@ public class DataTableQueryResourceValidator<TResource>
 {
     public DataTableQueryResourceValidator()
     {
-        RuleFor(q => q.Sort.By)
-            .Custom((sortBy, context) =>
+        RuleFor(q => q.Sort)
+            .Custom((sort, context) =>
             {
+                if (sort == null)
+                    return;
+
                 var property = typeof(TResource)
-                    .GetProperty(sortBy,
+                    .GetProperty(sort.By,
                         BindingFlags.IgnoreCase | BindingFlags.Instance | BindingFlags.Public);
                 if (property == null)
                     context

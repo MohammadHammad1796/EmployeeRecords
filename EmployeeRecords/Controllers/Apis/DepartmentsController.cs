@@ -93,7 +93,7 @@ public class DepartmentsController : Controller
     [HttpDelete("{id:int}")]
     public async Task<IActionResult> DeleteAsync([FromRoute] int id)
     {
-        var departmentExisted = await _departmentsRepository.IsRecordExisted(id);
+        var departmentExisted = await _departmentsRepository.IsRecordExistedAsync(id);
         if (!departmentExisted)
             return NotFound();
 

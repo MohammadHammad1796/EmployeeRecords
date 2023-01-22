@@ -7,5 +7,6 @@ public interface IDepartmentsRepository : IRepository<Department, Query, int>
 {
     Task<Department?> GetByNameAsync(string name);
 
-    Task<bool> IsRecordExisted(int id);
+    Task<bool> IsRecordExistedAsync(int id);
+    Task<int> GetCountAsync(string? searchQuery = null);
 }

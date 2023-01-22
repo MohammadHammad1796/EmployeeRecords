@@ -4,11 +4,8 @@ public class UpdatedFileResource
 {
     public string Path { get; }
 
-    public double Size { get; set; }
-
-    public UpdatedFileResource(string path, double size)
+    public UpdatedFileResource(string path)
     {
         Path = path;
-        Size = size;
     }
 }

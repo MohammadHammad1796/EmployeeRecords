@@ -1,10 +1,7 @@
-using System.ComponentModel.DataAnnotations;
+using EmployeeRecords.Controllers.SharedModels;
 
 namespace EmployeeRecords.Controllers.Apis.Resources;
 
-public class SaveDepartmentResource
+public class SaveDepartmentResource : SaveDepartmentSharedModel
 {
-    [Required]
-    [MaxLength(50)]
-    public string Name { get; set; }
 }

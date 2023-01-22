@@ -3,6 +3,7 @@ using EmployeeRecords.Controllers.Apis.Resources;
 using EmployeeRecords.Controllers.Validators;
 using EmployeeRecords.Core.Helpers;
 using EmployeeRecords.Core.Repositories;
+using EmployeeRecords.Core.Services;
 using EmployeeRecords.Custom.Attributes;
 using EmployeeRecords.Custom.Extensions;
 using Microsoft.AspNetCore.Mvc;
@@ -14,27 +15,27 @@ namespace EmployeeRecords.Controllers.Apis;
 [ApiRoute("employees/{employeeId:int}/files")]
 public class EmployeesFilesController : Controller
 {
-    private readonly IEmployeesRepository _employeesRepository;
     private readonly IEmployeesFilesRepository _employeesFilesRepository;
-    private readonly IMapper _mapper;
+    private readonly IEmployeeFilesService _employeeFilesService;
     private readonly IFilesRepository _filesRepository;
     private readonly ILogger<EmployeesFilesController> _logger;
-    private const string EmployeesFilesPath = "employees";
     private readonly FileCriteria _fileCriteria;
+    private readonly IMapper _mapper;
+    private const string EmployeesFilesPath = "employees";
 
     public EmployeesFilesController(
-        IMapper mapper,
-        IEmployeesRepository employeesRepository,
-        IFilesRepository filesRepository,
         IEmployeesFilesRepository employeesFilesRepository,
+        IEmployeeFilesService employeeFilesService,
+        IFilesRepository filesRepository,
         ILogger<EmployeesFilesController> logger,
+        IMapper mapper,
         IOptions<FileCriteria> fileCriteraiOptions)
     {
+        _employeesFilesRepository = employeesFilesRepository;
+        _employeeFilesService = employeeFilesService;
         _mapper = mapper;
         _filesRepository = filesRepository;
-        _employeesFilesRepository = employeesFilesRepository;
         _logger = logger;
-        _employeesRepository = employeesRepository;
         _fileCriteria = fileCriteraiOptions.Value;
     }
 
@@ -46,7 +47,7 @@ public class EmployeesFilesController : Controller
         if (!this.ValidateWithFluent(new DataTableQueryResourceValidator<FileResource>(), resource))
             return BadRequest(ModelState);
 
-        var employeeExisted = await _employeesRepository.IsRecordExisted(employeeId);
+        var employeeExisted = await _employeeFilesService.IsEmployeeExistedAsync(employeeId);
         if (!employeeExisted)
             return NotFound();
 
@@ -56,14 +57,11 @@ public class EmployeesFilesController : Controller
         query.EmployeeId = employeeId;
 
         var files = await _employeesFilesRepository.GetAsync(query);
-        if (!files.Any())
-            return Ok(files);
-
         var fileResources = _mapper.Map<IEnumerable<FileResource>>(files);
         if (!resource.WithTotal)
             return Ok(fileResources);
 
-        var total = await _employeesFilesRepository.GetCountAsync(query.SearchQuery);
+        var total = await _employeesFilesRepository.GetCountForEmployeeAsync(employeeId, query.SearchQuery);
         return Ok(new ItemsWithTotalResource<FileResource>(total, fileResources));
     }
 
@@ -72,7 +70,7 @@ public class EmployeesFilesController : Controller
         [FromRoute] int employeeId,
         [FromRoute] Guid id)
     {
-        var employeeExisted = await _employeesRepository.IsRecordExisted(employeeId);
+        var employeeExisted = await _employeeFilesService.IsEmployeeExistedAsync(employeeId);
         if (!employeeExisted)
             return NotFound();
 
@@ -92,7 +90,7 @@ public class EmployeesFilesController : Controller
         if (!this.ValidateWithFluent(new AddEmployeeFileValidator(_fileCriteria), resource))
             return BadRequest(ModelState);
 
-        var employeeExisted = await _employeesRepository.IsRecordExisted(employeeId);
+        var employeeExisted = await _employeeFilesService.IsEmployeeExistedAsync(employeeId);
         if (!employeeExisted)
             return NotFound();
 
@@ -120,11 +118,11 @@ public class EmployeesFilesController : Controller
         };
         var id = await _employeesFilesRepository.AddAsync(file);
 
-        return StatusCode(StatusCodes.Status201Created, new CreatedFileResource(filePath, sizeInMb, id));
+        return StatusCode(StatusCodes.Status201Created, new CreatedFileResource(filePath, id));
     }
 
-    [HttpPut("updateFile/{id:guid}")]
-    public async Task<IActionResult> UpdateFileAsync(
+    [HttpPut("{id:guid}")]
+    public async Task<IActionResult> UpdateAsync(
         [FromRoute] int employeeId,
         [FromRoute] Guid id,
         [FromForm] UpdateEmployeeFileResource resource)
@@ -132,7 +130,7 @@ public class EmployeesFilesController : Controller
         if (!this.ValidateWithFluent(new UpdateEmployeeFileValidator(_fileCriteria), resource))
             return BadRequest(ModelState);
 
-        var employeeExisted = await _employeesRepository.IsRecordExisted(employeeId);
+        var employeeExisted = await _employeeFilesService.IsEmployeeExistedAsync(employeeId);
         if (!employeeExisted)
             return NotFound();
 
@@ -140,10 +138,17 @@ public class EmployeesFilesController : Controller
         if (file == null)
             return NotFound();
 
-        string filePath;
+        file.Name = resource.Name;
+        if (resource.File == null)
+        {
+            await _employeesFilesRepository.UpdateAsync(file);
+            return NoContent();
+        }
+
+        string? newFilePath;
         try
         {
-            filePath = await _filesRepository.SaveAsync(resource.File, EmployeesFilesPath);
+            newFilePath = await _filesRepository.SaveAsync(resource.File, EmployeesFilesPath);
         }
         catch (Exception exception)
         {
@@ -152,15 +157,14 @@ public class EmployeesFilesController : Controller
             return this.ServerError();
         }
 
-
         var sizeInKb = (double)resource.File.Length / 1024;
         var sizeInMb = sizeInKb / 1024;
         sizeInMb = Math.Round(sizeInMb, 2);
         file.Size = sizeInMb;
         var oldFilePath = file.Path;
-        file.Path = filePath;
-
+        file.Path = newFilePath;
         await _employeesFilesRepository.UpdateAsync(file);
+
         try
         {
             _filesRepository.Delete(oldFilePath);
@@ -171,29 +175,7 @@ public class EmployeesFilesController : Controller
                                         $"after upload new one, record id: {id}");
         }
 
-        return Ok(new UpdatedFileResource(filePath, sizeInMb));
-    }
-
-    [HttpPut("updateFileName/{id:guid}")]
-    public async Task<IActionResult> UpdateFileNameAsync(
-        [FromRoute] int employeeId,
-        [FromRoute] Guid id,
-        [FromBody] UpdateEmployeeFileNameResource resource)
-    {
-        if (!ModelState.IsValid)
-            return BadRequest(ModelState);
-
-        var employeeExisted = await _employeesRepository.IsRecordExisted(employeeId);
-        if (!employeeExisted)
-            return NotFound();
-
-        var file = await _employeesFilesRepository.GetByIdAsync(id);
-        if (file == null)
-            return NotFound();
-
-        file.Name = resource.Name;
-        await _employeesFilesRepository.UpdateAsync(file);
-        return NoContent();
+        return Ok(new UpdatedFileResource(newFilePath));
     }
 
     [HttpDelete("{id:guid}")]
@@ -201,7 +183,7 @@ public class EmployeesFilesController : Controller
         [FromRoute] int employeeId,
         [FromRoute] Guid id)
     {
-        var employeeExisted = await _employeesRepository.IsRecordExisted(employeeId);
+        var employeeExisted = await _employeeFilesService.IsEmployeeExistedAsync(employeeId);
         if (!employeeExisted)
             return NotFound();
 

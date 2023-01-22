@@ -10,8 +10,6 @@ public interface IRepository<TEntity, TQuery, TKey>
 
     Task<IEnumerable<TEntity>> GetAsync(TQuery? query = null);
 
-    Task<int> GetCountAsync(string? searchQuery = null);
-
     Task<TKey> AddAsync(TEntity entity);
 
     Task UpdateAsync(TEntity entity);

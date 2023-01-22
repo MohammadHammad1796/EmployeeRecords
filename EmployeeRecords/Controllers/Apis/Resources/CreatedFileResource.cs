@@ -4,12 +4,9 @@ public class CreatedFileResource : CreatedResourceMeta<Guid>
 {
     public string Path { get; }
 
-    public double Size { get; set; }
-
-    public CreatedFileResource(string path, double size, Guid id)
+    public CreatedFileResource(string path, Guid id)
         : base(id)
     {
         Path = path;
-        Size = size;
     }
 }

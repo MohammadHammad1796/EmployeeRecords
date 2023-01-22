@@ -1,0 +1,123 @@
+﻿.dataTableSection .sort {
+    cursor: pointer;
+}
+
+.dataTableSection #pagingSection .active {
+    background-color: var(--bs-primary);
+}
+
+.dataTableSection #pagingSection input[type=button] {
+    width: 40px;
+    height: 40px;
+}
+
+.dataTableSection .fas {
+    font-size: 21px;
+    cursor: pointer;
+}
+
+.dataTableSection .fa-edit {
+    color: var(--bs-warning);
+}
+
+.dataTableSection .fa-trash {
+    color: var(--bs-danger);
+}
+
+.dataTableSection .odd {
+    background-color: var(--bs-gray-100);
+}
+
+.dataTableSection #items {
+    width: 100%;
+}
+
+.dataTableSection #items td {
+    word-wrap: break-word;
+}
+
+    .dataTableSection #items td > span {
+        background-color: yellow;
+    }
+
+@media only screen and (max-width: 760px) {
+
+    .dataTableSection table#items,
+    .dataTableSection thead,
+    .dataTableSection tbody,
+    .dataTableSection th,
+    .dataTableSection td,
+    .dataTableSection tr {
+        display: block;
+    }
+
+    .dataTableSection #items thead tr {
+        display: none;
+    }
+
+    .dataTableSection #items tr {
+        border: 1px solid #ccc;
+    }
+
+    .dataTableSection #items td {
+        border: none;
+        border-bottom: 1px solid #eee;
+        position: relative;
+        padding-left: 50% !important;
+    }
+
+        .dataTableSection #items td:before {
+            position: absolute;
+            top: 6px;
+            left: 6px;
+            width: 45%;
+            padding-right: 10px;
+            white-space: nowrap;
+        }
+
+        .dataTableSection #items td:before {
+            content: attr(head);
+        }
+
+        .dataTableSection #items td:not(:first-of-type) {
+            display: none;
+        }
+
+        .dataTableSection #items td:first-of-type {
+            cursor: pointer;
+        }
+
+    .dataTableSection .center {
+        text-align: center !important;
+        float: none !important;
+    }
+}
+
+@media (min-width: 761px) {
+    .dataTableSection #items td {
+        display: table-cell !important;
+    }
+
+    .dataTableSection .sortSection {
+        display: none;
+    }
+}
+
+.dataTableSection #pageSize, .dataTableSection #searchText {
+    display: inline-block;
+    width: auto;
+}
+
+.dataTableSection .sortSection > .col-12 {
+    position: relative;
+    left: 33.33333333%;
+    width: 66.66666666%;
+}
+
+@media (max-width: 400px) {
+    .dataTableSection .sortSection > .col-12 {
+        position: relative;
+        left: 25%;
+        width: 75%;
+    }
+}

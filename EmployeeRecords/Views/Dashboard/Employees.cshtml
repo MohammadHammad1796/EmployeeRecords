@@ -1,0 +1,170 @@
+﻿@model SaveEmployeeViewModel;
+@{
+	ViewData["title"] = "Manage Employees";
+}
+
+@section styles{
+	<link rel="stylesheet" href="/css/dashboard/dataTable.css" asp-append-version="true" />
+<link rel="stylesheet" href="/css/dashboard/manageEmployees.css" asp-append-version="true" />
+}
+<section>
+	<button class="btn btn-primary" id="new" data-bs-toggle="modal" data-bs-target="#manageModal">
+		New Employee
+	</button>
+</section>
+<section class="container-fluid dataTableSection">
+	<div class="row table-responsive">
+		<div class="col-md-12">
+			<div class="row">
+				<div class="col-md-5 col-sm-12 center mb-3">
+					<label for="pageSize">Show</label>
+					<select id="pageSize" class="form-select">
+						<option value="10" selected="selected">10</option>
+						<option value="25">25</option>
+						<option value="50">50</option>
+						<option value="100">100</option>
+					</select>
+					<label for="pageSize">entries</label>
+				</div>
+				<div class="col-md-7 col-sm-12 center mb-3" style="text-align: right;">
+					<label for="searchText">Search</label>
+					<input type="text" id="searchText" maxlength="50" autocomplete="off" class="form-control" placeholder="Type to search by name"/>
+				</div>
+			</div>
+			<div class="row sortSection">
+				<div class="col-sm-6 col-12 mb-3">
+					<label for="sortBy">Sort By</label>
+					<select id="sortBy" class="form-select" style="width: auto; display: inline-block;">
+						<option value="name" selected="selected">Name</option>
+						<option value="department">Department</option>
+						<option value="dateOfBith">Date of birth</option>
+						<option value="address">Address</option>
+					</select>
+				</div>
+				<div class="col-sm-6 col-12 mb-3">
+					<div class="form-check">
+						<input class="form-check-input" type="radio" id="sortAsc" name="sort" value="asc" checked="checked">
+						<label class="form-check-label" for="sortAsc">
+							Ascending
+						</label>
+					</div>
+					<div class="form-check">
+						<input class="form-check-input" type="radio" id="sortDesc" name="sort" value="desc">
+						<label class="form-check-label" for="sortDesc">
+							Descending
+						</label>
+					</div>
+				</div>
+			</div>
+		</div>
+		<table id="items" class="table border-bottom border-top">
+			<thead>
+				<tr>
+					<th class="sort" sortby="name">
+						Name<i class="fas fa-sort-up float-end"></i>
+					</th>
+					<th class="sort" sortby="department">
+						Department<i class="fas float-end"></i>
+					</th>
+					<th class="sort" sortby="dateOfBirth">
+						Date of birth<i class="fas float-end"></i>
+					</th>
+					<th class="sort" sortby="address">
+						Address<i class="fas float-end"></i>
+					</th>
+					<th>Actions</th>
+				</tr>
+			</thead>
+			<tbody></tbody>
+		</table>
+		<div class="row">
+			<div class="col-md-6 col-sm-12 center mb-3" id="countInfo"></div>
+			<div id="paginationSection" class="col-md-6 col-sm-12 center mb-3" style="text-align: right;">
+				<a value="0">Previous</a>
+				<a value="0">Next</a>
+			</div>
+		</div>
+	</div>
+</section>
+
+<div class="modal fade" id="manageModal" tabindex="-1" aria-labelledby="manageModalLabel" aria-hidden="true">
+	<div class="modal-dialog modal-xl modal-lg">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="manageModalLabel">New Employee</h5>
+				<button type="button" class="btn-close " data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<form id="manageItems" class="row" style="padding: 10px;">
+				<div class="modal-body col-md-6 col-12">
+					<div class="mb-3">
+						<label asp-for="Name" class="col-form-label"></label>
+						<input autocomplete="off" asp-for="Name" class="form-control" />
+						<span asp-validation-for="Name"></span>
+					</div>
+				</div>
+				<div class="modal-body col-md-6 col-12">
+					<div class="mb-3">
+						<label asp-for="Address" class="col-form-label"></label>
+						<input autocomplete="off" asp-for="Address" class="form-control" />
+						<span asp-validation-for="Address"></span>
+					</div>
+				</div>
+				<div class="modal-body col-md-6 col-12">
+					<div class="mb-3">
+						<label asp-for="DateOfBirth" class="col-form-label"></label>
+						<input asp-for="DateOfBirth" class="form-control" type="date" 
+						       data-val="true" data-val-dateOfBirthRange="Date of birth should be at least since 18 year and maximum 60" />
+						<span asp-validation-for="DateOfBirth"></span>
+					</div>
+				</div>
+				<div class="modal-body col-md-6 col-12">
+					<div class="mb-3">
+						<label asp-for="DepartmentId" class="col-form-label">Department</label>
+						<input type="text" id="departmentName" autocomplete="off" class="form-control"/>
+						<span asp-validation-for="DepartmentId"></span>
+						<input asp-for="DepartmentId" type="hidden" data-val-required="The department is required." />
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="submit" class="btn btn-primary" id="addBtn" disabled="disabled">Add</button>
+				</div>
+			</form>
+			<input type="hidden" id="Id" name="Id" value="0"/>
+		</div>
+	</div>
+</div>
+
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="deleteModalLabel">Delete Employee data</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<form id="deleteItem">
+				<div class="modal-body">
+					<div class="mb-3">
+						<p id="deleteParagraph" class="row"></p>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="submit" class="btn btn-primary">Yes</button>
+					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+
+@section scripts
+{
+	<environment include="Development">
+		<script src="/libs/corejs-typeahead1.3.1/typeahead.bundle.min.js"></script>
+	</environment>
+	<environment exclude="Development">
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/corejs-typeahead/1.3.1/typeahead.bundle.min.js" 
+		        asp-fallback-src="/libs/corejs-typeahead1.3.1/typeahead.bundle.min.js"></script>
+	</environment>
+	<script src="/js/dashboard/dataTable.js" asp-append-version="true"></script>
+	<script src="/js/dashboard/manageEmployees.js" asp-append-version="true"></script>
+}

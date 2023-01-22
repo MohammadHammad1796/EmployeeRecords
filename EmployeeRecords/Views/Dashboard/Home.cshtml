@@ -1,0 +1,28 @@
+﻿@{
+	ViewData["title"] = "Home";
+}
+
+<div class="row">
+	<div class="col-md-1 mb-3"></div>
+	<a role="button" class="col-md-5 card justify-content-center align-items-center mb-3" 
+	   style="height: 100px;" asp-controller="Dashboard" asp-action="Departments">Departments</a>
+	<div class="col-md-1 mb-3"></div>
+	<a role="button" class="col-md-5 card justify-content-center align-items-center mb-3" 
+	   style="height: 100px;" asp-controller="Dashboard" asp-action="Employees">Employees</a>
+</div>
+
+@section Styles{
+	<style>
+		.col-md-5.card.justify-content-center.align-items-center {
+			color: #000;
+		}
+		.col-md-5.card.justify-content-center.align-items-center:hover {
+			background-color: var(--bs-secondary);
+			color: white;
+			cursor: pointer;
+		}
+		a {
+			text-decoration: none;
+		}
+	</style>
+}

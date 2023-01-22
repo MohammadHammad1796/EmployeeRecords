@@ -9,13 +9,14 @@ public class UpdateEmployeeFileValidator : AbstractValidator<UpdateEmployeeFileR
     public UpdateEmployeeFileValidator(FileCriteria criteria)
     {
         RuleFor(r => r.File)
-            .Must(f => f.Length <= 1024 * 1024 * criteria.MaxSizeInMb)
+            .Must(f => f?.Length <= 1024 * 1024 * criteria.MaxSizeInMb)
+            .When(r => r.File != null)
             .WithMessage("File maximum allowed size is 5 Mb");
 
         RuleFor(r => r.File)
-            .NotNull()
             .Must(f => criteria.AllowedContentTypes.Any(a =>
-                a.Equals(f.ContentType, StringComparison.CurrentCultureIgnoreCase)))
+                a.Equals(f?.ContentType, StringComparison.CurrentCultureIgnoreCase)))
+            .When(r => r.File != null)
             .WithMessage("File type is not allowed");
     }
 }

@@ -1,9 +1,11 @@
 ﻿using EmployeeRecords.Core.Helpers;
 using EmployeeRecords.Core.Repositories;
+using EmployeeRecords.Core.Services;
 using EmployeeRecords.Custom.JsonConverters;
 using EmployeeRecords.Custom.Middlewares;
 using EmployeeRecords.Infrastructure;
 using EmployeeRecords.Infrastructure.Data.Repositories;
+using EmployeeRecords.Infrastructure.Services;
 using EmployeeRecords.Mapping;
 using NLog.Web;
 using System.Net;
@@ -47,7 +49,9 @@ public class Program
 
         services.AddScoped<IDepartmentsRepository, DepartmentsRepository>();
         services.AddScoped<IEmployeesRepository, EmployeesRepository>();
+        services.AddScoped<IEmployeesService, EmployeesService>();
         services.AddScoped<IEmployeesFilesRepository, EmployeesFilesRepository>();
+        services.AddScoped<IEmployeeFilesService, EmployeeFilesService>();
 
         services.AddScoped<IFilesRepository, FilesRepository>();
 
@@ -62,14 +66,17 @@ public class Program
         app.UseHttpsRedirection();
 
         app.UseStaticFiles();
-        app.UseStatusCodePages();
+
+        app.UseMiddleware<NotFoundPageMiddleware>();
+
         app.UseRouting();
 
         app.UseEndpoints(endpoints =>
         {
             endpoints.MapControllerRoute(
                 name: "default",
-                pattern: "{controller}/{action}/{id?}");
+                pattern: "{controller}/{action}/{id?}",
+                defaults: new { controller = "Dashboard", action = "Home" });
         });
     }
 }

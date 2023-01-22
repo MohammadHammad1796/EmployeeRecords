@@ -1,0 +1,59 @@
+﻿#items td {
+    vertical-align: baseline;
+}
+
+#items td:last-child a {
+    text-decoration: none;
+}
+
+.toast-container {
+    top: 55px !important;
+}
+
+section {
+    margin-bottom: 15px;
+    padding: 1%;
+}
+
+.field-validation-error {
+    color: #F00;
+}
+
+.form-select:hover {
+    cursor: pointer;
+}
+
+.twitter-typeahead {
+    width: 100%;
+}
+
+/* ReSharper disable once Html.AttributeNotResolved */
+.twitter-typeahead div[role="listbox"] {
+    background-color: white;
+    width: 100%;
+    padding-left: 0.75rem;
+    word-break: break-word;
+}
+
+/* ReSharper disable once Html.AttributeNotResolved */
+.twitter-typeahead div[role="option"]:not(:last-child) {
+    border-bottom: solid 1px #EEF;
+    margin-bottom: 0.5rem;
+}
+
+/* ReSharper disable once Html.AttributeNotResolved */
+.twitter-typeahead div[role="option"]:hover {
+    cursor: pointer;
+    background-color: yellow;
+}
+
+@media (min-width: 761px) {
+    #items {
+        max-width: none;
+        width: auto;
+    }
+
+    #items td, #items th {
+        width: 130px;
+    }
+}

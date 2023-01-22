@@ -64,14 +64,20 @@ public class EmployeesFilesRepository : Repository<File>, IEmployeesFilesReposit
         return files;
     }
 
-    public async Task<int> GetCountAsync(string? searchQuery = null)
+    public async Task<int> GetCountForEmployeeAsync(int employeeId, string? searchQuery = null)
     {
-        var sqlStatement = "SELECT COUNT(*) FROM EmployeesFiles";
-        var parameters = new List<SqlParameter>();
+        var sqlStatement = "SELECT COUNT(*) FROM EmployeesFiles WHERE EmployeeId = @employeeId";
+        var parameters = new List<SqlParameter>
+        {
+            new("@employeeId", SqlDbType.Int)
+            {
+                Value = employeeId
+            }
+        };
 
         if (!string.IsNullOrWhiteSpace(searchQuery))
         {
-            sqlStatement += " WHERE Name LIKE @searchQuery";
+            sqlStatement += " AND Name LIKE @searchQuery";
             var searchParameter = new SqlParameter("@searchQuery", SqlDbType.VarChar)
             {
                 Value = $"%{searchQuery}%"
